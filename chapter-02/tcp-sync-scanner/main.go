@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"sync"
 )
 
@@ -26,7 +27,14 @@ func main() {
 
 func worker(ports chan int, wg *sync.WaitGroup) {
 	for p := range ports {
-		fmt.Println(p)
+
+		address := fmt.Sprintf("scanme.nmap.org:%d", p)
+		conn, err := net.Dial("tcp", address)
+		if err == nil {
+			fmt.Printf("Port %d is open!\n", p)
+			conn.Close()
+		}
+
 		wg.Done()
 	}
 }
